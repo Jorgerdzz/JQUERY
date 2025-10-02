@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="number" id="caja1">
+    <input type="number" id="caja2">
+    <input type="number" id="caja3">
+
+    <button id="evaluar">Evaluar numeros</button>
+
+    <h1 id="resultado"></h1>
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            $("#evaluar").click(function(){
+                var num1 = $("#caja1").val();
+                var num2 = $("#caja2").val();
+                var num3 = $("#caja3").val();
+
+                var array = [];
+
+                array.push(num1);
+                array.push(num2);
+                array.push(num3);
+
+                var menor = Infinity;
+                var mayor = Infinity;
+
+
+
+                for(var i=0; i<array.length; i++){
+                    if(array[i] > mayor){
+                        mayor = array[i];
+                    }
+                    if(array[i] < menor){
+                        menor = array[i];
+                    }
+                }
+
+                for(var i=0; i<array.length; i++){
+                    if(array[i] !== menor && array[i] !== mayor){
+                        mediano = array[i];
+                    }
+                }
+
+                $("#resultado").html(
+                    "El número mayor es " + mayor + "<br>" +
+                    "El número mediano es " + mediano + "<br>" +
+                    "El número menor es " + menor
+                );
+
+            })
+            
+        })
+    </script>
+</body>
+</html>

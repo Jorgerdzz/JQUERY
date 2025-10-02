@@ -4,8 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+        .rojo{
+            color: red;
+        }
+    </style>
+
 </head>
 <body>
-    Holaaaaa
+    <h1 class="rojo">Selectores JQuery</h1>
+    <button id="boton1">Boton1</button>
+    <button id="boton2">Boton2</button>
+    <button id="boton3">Boton3</button>
+    <button id="e46">Clicame para ver el e46</button>
+
+    <img src="images/e46.jfif" style="display: none;" alt="">
+    <img src="images/gti.jfif" alt="">
+    <img src="images/claseA.jfif" alt="">
+
+    <p>parrafo1</p>
+    <p>parrafo2</p>
+    <p>parrafo3</p>
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            alert("Hola Mundo");
+            $("#boton1").hide();
+            $("p").click(function(){
+                $("#boton2").hide();
+            })
+            $("#boton3").click(function(){
+                console.log("Mensaje por consola web");
+            })
+
+            // el this actua al objeto al que se refiere el selector
+            $(".rojo").click(function(){
+                $(this).hide();
+            })
+
+            $("#e46").click(function(){
+                $("img").attr("src", "images/e46.jfif").show();
+                $("img").not(":first").hide();
+            })
+        });
+    </script>
 </body>
+
 </html>
