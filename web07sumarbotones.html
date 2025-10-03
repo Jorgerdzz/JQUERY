@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <label for="">Introduzca numero de botones</label>
+    <input type="text" id="numBotones">
+    <button id="boton">Generar</button>
+    <div id="cajabotones"></div>
+    <h1 id="resultado"></h1>
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#boton").click(function(){
+                var cajabotones = $("#cajabotones");
+                var numBotones = parseInt($("#numBotones").val());
+                console.log(numBotones);
+                for(var i=0; i<=numBotones; i++){
+                    var botones = $("<button>");
+                    cajabotones.append(botones);
+                    var valor = Math.floor(Math.random()*100);
+                    botones.attr("value", valor);
+                    botones.text(valor);
+                    suma = 0;
+                    botones.click(function(){
+                        var valorBoton = parseInt($(this).val());
+                        suma = suma + valorBoton;
+                        $("#resultado").html("");
+                        $("#resultado").append(suma);
+                    })
+                    
+                }
+                
+            })
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Filtros XML</h1>
+    <label for="">Introduzca ID: </label>
+    <input type="text" id="cajaid">
+    <button id="buscaratributo">Buscar atributo ID </button>
+    <h1 id="mensaje"></h1>
+    <label for="">Introduzca Localidad: </label>
+    <input type="text" id="cajalocalidad">
+    <button id="buscarlocalidad">Buscar localidad</button>
+    <ul id="listadepartamentos"></ul>
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            $.get("documents/departamentos.xml", function(data){
+                $("#buscarlocalidad").click(function(){
+                    var localidad = $("#cajalocalidad").val();
+                    var filtro = "LOC:contains('" + localidad + "')";
+                    var html = "";
+                    $(data).find(filtro).each(function(){
+                        var cosa = $(this).text();
+                        html += "<li>" + cosa + "</li>";
+                    })
+                    $("#listadepartamentos").html(html);
+                })
+                
+            })
+
+            $.get("documents/departamentos.xml", function(data){
+                $("#buscaratributo").click(function(){
+                    var id = $("#cajaid").val();
+                    var filtro = "DEPT[DEPT_NO=" + id + "]";
+                    var nododept = $(data).find(filtro).first();
+                    var nombre = $(nododept).find("DNOMBRE").text();
+                    var localidad = $(nododept).find("LOC").text();
+                    $("#mensaje").text("Departamento: " + nombre + ", Localidad: " + localidad);
+                })
+                
+            })
+        })
+    </script>
+
+</body>
+</html>
