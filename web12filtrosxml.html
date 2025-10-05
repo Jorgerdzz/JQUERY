@@ -23,27 +23,30 @@
             $.get("documents/departamentos.xml", function(data){
                 $("#buscarlocalidad").click(function(){
                     var localidad = $("#cajalocalidad").val();
-                    var filtro = "LOC:contains('" + localidad + "')";
+                    var filtro = "DEPT:contains('" + localidad + "')";
                     var html = "";
                     $(data).find(filtro).each(function(){
-                        var cosa = $(this).text();
-                        html += "<li>" + cosa + "</li>";
+                        var departamento = $(this).find("DNOMBRE").text();
+                        var numero = $(this).attr("DEPT_NO");
+                        html += "<li>Departamento: " + departamento + " / Numero:" + numero + "</li>";
                     })
+                    if(html == ""){
+                        html = "<li>No se encontraron departamentos en dicha localidad</li>";
+                    }
                     $("#listadepartamentos").html(html);
                 })
                 
             })
 
-            $.get("documents/departamentos.xml", function(data){
-                $("#buscaratributo").click(function(){
+            $("#buscaratributo").click(function(){
+                $.get("documents/departamentos.xml", function(data){
                     var id = $("#cajaid").val();
-                    var filtro = "DEPT[DEPT_NO=" + id + "]";
+                    var filtro = 'DEPT[DEPT_NO="' + id + '"]';
                     var nododept = $(data).find(filtro).first();
                     var nombre = $(nododept).find("DNOMBRE").text();
                     var localidad = $(nododept).find("LOC").text();
                     $("#mensaje").text("Departamento: " + nombre + ", Localidad: " + localidad);
                 })
-                
             })
         })
     </script>
