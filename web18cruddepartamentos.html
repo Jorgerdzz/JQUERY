@@ -15,10 +15,26 @@
         </thead>
         <tbody></tbody>
     </table>
+    <hr/>
+
+    <h1>INSERTAR DEPARTAMENTO</h1>
+    <label for="">Introduzca ID: </label>
+    <input type="number" id="id">
+    <label for="">Introduzca el nombre del departamento: </label>
+    <input type="text" id="nombredepartamento">
+    <label for="">Introduzca la localidad del departamento: </label>
+    <input type="text" id="localidad">
+    <button id="botoninsertar">Insertar departamento</button>
+    <hr/>
+
+    <label for="">Introduzca ID:</label>
+    <input type="number" id="ideliminar">
+    <button id="botoneliminar">Eliminar departamento</button>
     <script src="js/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function(){
             loadDepartamentos();
+            insertDepartamentos();
         })
 
         function loadDepartamentos(){
@@ -26,8 +42,8 @@
                 var html = "";
                 $(data).find("Departamento").each(function(){
                     var id = $(this).find("IdDepartamento").text();
-                    var nombre = $(this).find("nombre").text();
-                    var localidad = $(this).find("localidad").text();
+                    var nombre = $(this).find("Nombre").text();
+                    var localidad = $(this).find("Localidad").text();
                     html += "<tr>";
                     html += "<td>" + id + "</td>";
                     html += "<td>" + nombre + "</td>";
@@ -37,6 +53,40 @@
                 $("#tabladepartamentos tbody").html(html);
             })
         }
+
+
+        function insertDepartamentos(){
+            $("#botoninsertar").click(function(){
+                const nuevoDepartamento = {
+                id: $("#id").val(),
+                nombre: $("#nombredepartamento").val(),
+                localidad: $("#localidad").val()
+            }
+            const dataXml = `
+                <Departamento>
+                    <IdDepartamento>${nuevoDepartamento.id}</IdDepartamento>
+                    <Nombre>${nuevoDepartamento.nombre}</Nombre>
+                    <Localidad>${nuevoDepartamento.localidad}</Localidad>
+                </Departamento> 
+            `;
+            $.ajax({
+                url: "https://apicruddepartamentosxml.azurewebsites.net/api/Departamentos",
+                type: "POST",
+                contentType: "application/xml",
+                data: dataXml,
+                success: function(response){
+                    console.log("Departamento insertado correctamente", response);
+                    loadDepartamentos(); // actualiza la tabla
+                    $("#id, #nombredepartamento, #localidad").val(""); // limpia
+                },
+                error: function(err){
+                    console.log("Error al insertar", err)
+                }
+            })
+            })
+        }
+
+
     </script>
 </body>
 </html>
