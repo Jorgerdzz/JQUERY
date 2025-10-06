@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Servicio XML Clientes</h1>
+    <label for="">Seleccione un cliente</label>
+    <select name="" id="selectclientes">
+        <option value="" disabled>Seleccione un cliente</option>
+    </select>
+    <table id="listaclientes">
+        <thead>
+            <th>DIRECCION</th>
+            <th>EMAIL</th>
+            <th>CODIGO POSTAL</th>
+            <th>PAGINA WEB</th>
+            <th>IMAGEN</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="contenedor"></div>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.get("https://apiclientesxml.azurewebsites.net//api/Clientes/GetClientesXML", function(data){
+                console.log("dentro");
+                $(data).find("CLIENTE").each(function(){
+                    var id = $(this).attr("IDCLIENTE")
+                    var nombre = $(this).find("NOMBRE").text();
+                    var option = $("<option>");
+                    option.attr("value", id);
+                    option.text(nombre);
+                    $("#selectclientes").append(option);
+                })
+            })
+            $("#selectclientes").click(function(){
+                var id = $(this).val();
+                var html = "";
+                $.get("https://apiclientesxml.azurewebsites.net//api/Clientes/GetClientesXML", function(data){
+                    var filtro = "CLIENTE[IDCLIENTE=" + id + "]";
+                    $(data).find(filtro).each(function(){
+                        var direccion = $(this).find("DIRECCION").text();
+                        var email = $(this).find("EMAIL").text();
+                        var cp = $(this).find("CODIGOPOSTAL").text();
+                        var pagweb = $(this).find("PAGINAWEB").text();
+                        var imagen = $(this).find("IMAGENCLIENTE").text();
+                        img = "<img src='" + imagen + "'" + "width='150px'" + "/>";
+                        html += "<tr>";
+                        html += "<td>" + direccion + "</td>";
+                        html += "<td>" + email + "</td>";
+                        html += "<td>" + cp + "</td>";
+                        html += "<td>" + pagweb + "</td>";
+                        html += "<td>" + img + "</td>";
+                        html += "</tr>";
+                    })
+                    $("#listaclientes tbody").html(html);
+                })
+            })
+        })
+    </script>
+</body>
+</html>
