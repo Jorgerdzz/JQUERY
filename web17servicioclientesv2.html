@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Clientes XML</h1>
+    <div id="contenedor"></div>
+    </hr>
+    <ul id="informacion"></ul>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.get("https://apiclientesxml.azurewebsites.net//api/Clientes/", function(data){
+                $(data).find("Cliente").each(function(){
+                    var boton = $("<button>");
+                    var nombre = $(this).find("Nombre").text();
+                    var id = $(this).find("IdCliente").text();
+                    boton.val(id);
+                    boton.text(nombre);
+                    $("#contenedor").append(boton);
+                    boton.click(function(){
+                        var idCliente = $(this).val();
+                        $.get("https://apiclientesxml.azurewebsites.net//api/Clientes/", function(data){
+                            var filtro = "Cliente:contains(" + idCliente + ")";
+                            $(data).find(filtro).each(function(){
+                                var email = $(this).find("Email").text();
+                                var pagweb = $(this).find("PaginaWeb").text();
+                                var imagen = $(this).find("Imagen").text();
+                                var img = "<img src='" + imagen + "'/>";
+                                var html = "";
+                                html += "<li>Email: " + email + "</li>";
+                                html += "<li>Pagina web: " + pagweb + "</li>";
+                                html += "<li>Imagen: " + img + "</li>";
+                                $("#informacion").html(html);
+                            })
+                        })
+                        
+                    })
+                })
+            })
+
+        })
+    </script>
+</body>
+</html>
