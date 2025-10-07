@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>CRUD DOCTORES XML</h1>
+    <table id="tabladoctores">
+        <thead>
+            <th>APELLIDO</th>
+            <th>ESPECIALIDAD</th>
+            <th>ID DOCTOR</th>
+            <th>ID HOSPITAL</th>
+            <th>SALARIO</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <hr/>
+
+    <label for="">Introduzca apellido:</label>
+    <input type="text" id="cajaapellido"><br>
+    <label for="">Introduzca especialidad:</label>
+    <input type="text" id="cajaespecialidad"><br>
+    <label for="">Introduzca ID doctor:</label>
+    <input type="number" id="cajaiddoctor"><br>
+    <label for="">Introduzca ID hospital:</label>
+    <input type="number" id="cajaidhospital"><br>
+    <label for="">Introduzca salario:</label>
+    <input type="number" id="cajasalario"><br>
+    <hr/>
+    <button id="botoninsertar">Insertar doctor</button>
+    <button id="botonmodificar">Modificar doctor</button>
+    <button id="botoneliminar">Eliminar doctor</button>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            loadDoctores();
+            insertDoctores();
+            getDoctores();
+            updateDoctores();
+            deleteDoctores();
+        })
+
+        function loadDoctores(){
+            $.get("https://apicruddoctoresxml.azurewebsites.net/api/Doctores", function(data){
+                let html = "";
+                $(data).find("Doctor").each(function(){
+                    let apellido = $(this).find("Apellido").text();
+                    let especialidad = $(this).find("Especialidad").text();
+                    let idDoctor = $(this).find("IdDoctor").text();
+                    let idHospital = $(this).find("IdHospital").text();
+                    let salario = $(this).find("Salario").text();
+                    html += "<tr>";
+                    html += "<td>" + apellido + "</td>";
+                    html += "<td>" + especialidad + "</td>";
+                    html += "<td>" + idDoctor + "</td>";
+                    html += "<td>" + idHospital + "</td>";
+                    html += "<td>" + salario + "</td>";
+                    html += "</tr>";
+                })
+                $("#tabladoctores tbody").html(html);
+            })
+        }
+
+        function insertDoctores(){
+            
+            $("#botoninsertar").click(function(){
+                const doctor = {
+                    apellido: $("#cajaapellido").val(),
+                    especialidad: $("#cajaespecialidad").val(),
+                    idDoctor: $("#cajaiddoctor").val(),
+                    idHospital: $("#cajaidhospital").val(),
+                    salario: $("#cajasalario").val()
+                }
+                let dataXml = `
+                    <Doctor>
+                        <Apellido>${doctor.apellido}</Apellido>
+                        <Especialidad>${doctor.especialidad}</Especialidad>
+                        <IdDoctor>${doctor.idDoctor}</IdDoctor>
+                        <IdHospital>${doctor.idHospital}</IdHospital>
+                        <Salario>${doctor.salario}</Salario>
+                    </Doctor>
+                `;
+                $.ajax({
+                    url: "https://apicruddoctoresxml.azurewebsites.net/api/Doctores",
+                    type: "POST",
+                    contentType: "application/xml",
+                    data: dataXml,
+                    success: function(){
+                        console.log("Insertado");
+                        loadDoctores();
+                    }
+                })
+            })
+        }
+        
+        function getDoctores(apellido, especialidad, idDoctor, idHospital, salario){
+            let dataXml = `
+                <Doctor>
+                    <Apellido>${apellido}</Apellido>
+                    <Especialidad>${especialidad}</Especialidad>
+                    <IdDoctor>${idDoctor}</IdDoctor>
+                    <IdHospital>${idHospital}</IdHospital>
+                    <Salario>${salario}</Salario>
+                </Doctor>
+            `;
+            return dataXml;
+        }
+
+        function updateDoctores(){
+            $("#botonmodificar").click(function(){
+                const doctor = {
+                    apellido: $("#cajaapellido").val(),
+                    especialidad: $("#cajaespecialidad").val(),
+                    idDoctor: $("#cajaiddoctor").val(),
+                    idHospital: $("#cajaidhospital").val(),
+                    salario: $("#cajasalario").val()
+                }
+                $.ajax({
+                    url: "https://apicruddoctoresxml.azurewebsites.net/api/Doctores",
+                    type: "PUT",
+                    contentType: "application/xml",
+                    data: getDoctores(doctor.apellido, doctor.especialidad, doctor.idDoctor, doctor.idHospital, doctor.salario),
+                    success: function(){
+                        console.log("Modificado"),
+                        loadDoctores();
+                    }
+                })
+            })
+        }
+
+        function deleteDoctores(){
+            $("#botoneliminar").click(function(){
+                let idDoctor = $("#cajaiddoctor").val();
+                $.ajax({
+                    url: "https://apicruddoctoresxml.azurewebsites.net/api/Doctores/" + idDoctor,
+                    type: "DELETE",
+                    success: function(){
+                        console.log("Eliminado");
+                        loadDoctores();
+                    }
+                    
+                })
+            })
+            
+
+        }
+
+    </script>
+</body>
+</html>
