@@ -17,24 +17,23 @@
     </table>
     <hr/>
 
-    <h1>INSERTAR DEPARTAMENTO</h1>
     <label for="">Introduzca ID: </label>
-    <input type="number" id="id">
-    <label for="">Introduzca el nombre del departamento: </label>
-    <input type="text" id="nombredepartamento">
-    <label for="">Introduzca la localidad del departamento: </label>
-    <input type="text" id="localidad">
+    <input type="number" id="id"><br/>
+    <label for="">Introduzca nombre: </label>
+    <input type="text" id="nombredepartamento"><br/>
+    <label for="">Introduzca localidad: </label>
+    <input type="text" id="localidad"><br/>
     <button id="botoninsertar">Insertar departamento</button>
-    <hr/>
-
-    <label for="">Introduzca ID:</label>
-    <input type="number" id="ideliminar">
+    <button id="botonmodificar">Modificar departamento</button>
     <button id="botoneliminar">Eliminar departamento</button>
     <script src="js/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function(){
             loadDepartamentos();
             insertDepartamentos();
+            getDepartamentos();
+            updateDepartamentos();
+            deleteDepartamentos();
         })
 
         function loadDepartamentos(){
@@ -58,31 +57,82 @@
         function insertDepartamentos(){
             $("#botoninsertar").click(function(){
                 const nuevoDepartamento = {
-                id: $("#id").val(),
-                nombre: $("#nombredepartamento").val(),
-                localidad: $("#localidad").val()
+                    id: $("#id").val(),
+                    nombre: $("#nombredepartamento").val(),
+                    localidad: $("#localidad").val()
+                }
+                const dataXml = `
+                    <Departamento>
+                        <IdDepartamento>${nuevoDepartamento.id}</IdDepartamento>
+                        <Nombre>${nuevoDepartamento.nombre}</Nombre>
+                        <Localidad>${nuevoDepartamento.localidad}</Localidad>
+                    </Departamento> 
+                `;
+                $.ajax({
+                    url: "https://apicruddepartamentosxml.azurewebsites.net/api/Departamentos",
+                    type: "POST",
+                    contentType: "application/xml",
+                    data: dataXml,
+                    success: function(response){
+                        console.log("Departamento insertado correctamente", response);
+                        loadDepartamentos(); // actualiza la tabla
+                        $("#id, #nombredepartamento, #localidad").val(""); // limpia
+                    },
+                    error: function(err){
+                        console.log("Error al insertar", err)
+                    }
+                })
+            })
+        }
+
+        function getDepartamentos(id, nombre, localidad){
+            const departamento = {
+                id: id,
+                nombre: nombre,
+                localidad: localidad
             }
             const dataXml = `
                 <Departamento>
-                    <IdDepartamento>${nuevoDepartamento.id}</IdDepartamento>
-                    <Nombre>${nuevoDepartamento.nombre}</Nombre>
-                    <Localidad>${nuevoDepartamento.localidad}</Localidad>
+                    <IdDepartamento>${departamento.id}</IdDepartamento>
+                    <Nombre>${departamento.nombre}</Nombre>
+                    <Localidad>${departamento.localidad}</Localidad>
                 </Departamento> 
             `;
-            $.ajax({
-                url: "https://apicruddepartamentosxml.azurewebsites.net/api/Departamentos",
-                type: "POST",
-                contentType: "application/xml",
-                data: dataXml,
-                success: function(response){
-                    console.log("Departamento insertado correctamente", response);
-                    loadDepartamentos(); // actualiza la tabla
-                    $("#id, #nombredepartamento, #localidad").val(""); // limpia
-                },
-                error: function(err){
-                    console.log("Error al insertar", err)
+            return dataXml;
+        }
+
+        function updateDepartamentos(){
+            $("#botonmodificar").click(function(){
+                const depModificado = {
+                    id : $("#id").val(),
+                    nombre: $("#nombredepartamento").val(),
+                    localidad: $("#localidad").val()
                 }
+                var dataXml = getDepartamentos(depModificado.id, depModificado.nombre, depModificado.localidad);
+                $.ajax({
+                    url: "https://apicruddepartamentosxml.azurewebsites.net/api/Departamentos",
+                    type: "PUT",
+                    contentType: "application/xml",
+                    data: dataXml,
+                    success: function(){
+                        console.log("Modificado"),
+                        loadDepartamentos();
+                    }
+                })
             })
+        }
+
+        function deleteDepartamentos(){
+            $("#botoneliminar").click(function(){
+                var id = $("#id").val();
+                $.ajax({
+                    url: "https://apicruddepartamentosxml.azurewebsites.net/api/Departamentos/" + id,
+                    type: "DELETE",
+                    success: function(){
+                        console.log("eliminado");
+                        loadDepartamentos();
+                    }
+                })
             })
         }
 
