@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>CRUD DEPARTAMENTOS JSON</h1>
+    <label for="">Id Departamento</label>
+    <input type="number" id="cajaid">
+    <label for="">Nombre</label>
+    <input type="text" id="cajanombre">
+    <label for="">Localidad</label>
+    <input type="text" id="cajalocalidad">
+    <button id="botoninsertar">Insertar</button>
+    <button id="botonmodificar">Modificar</button>
+    <button id="botoneliminar">Eliminar</button>
+    <hr>
+    <table id="tabladepartamentos" border="1">
+        <thead>
+            <th>ID DEPARTAMENTO</th>
+            <th>NOMBRE</th>
+            <th>LOCALIDAD</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            loadDepartamentos();
+            insertDepartamentos();
+            updateDepartamentos();
+            deleteDepartamentos();
+        })
+
+        function loadDepartamentos(){
+            $.getJSON("https://apicruddepartamentoscore.azurewebsites.net/api/Departamentos", function(data){
+                let html = "";
+                $.each(data, function(index, object){
+                    let numero = object.numero;
+                    let nombre = object.nombre;
+                    let localidad = object.localidad;
+                    html += "<tr>";
+                    html += "<td>" + numero + "</td>";
+                    html += "<td>" + nombre + "</td>";
+                    html += "<td>" + localidad + "</td>";
+                    html += "</tr>";
+                })
+                $("#tabladepartamentos tbody").html(html);
+            })
+        }
+
+
+        function insertDepartamentos(){
+            $("#botoninsertar").click(function(){
+                const dept = {
+                    numero: parseInt($("#cajaid").val()),
+                    nombre: $("#cajanombre").val(),
+                    localidad: $("#cajalocalidad").val()
+                }
+                $.ajax({
+                    url: "https://apicruddepartamentoscore.azurewebsites.net/api/Departamentos",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(dept),
+                    success: function(data){
+                        console.log("Insertado");
+                        loadDepartamentos();
+                    } 
+                })
+            })
+        }
+
+        function updateDepartamentos(){
+            $("#botonmodificar").click(function(){
+                const dept = {
+                    numero: parseInt($("#cajaid").val()),
+                    nombre: $("#cajanombre").val(),
+                    localidad: $("#cajalocalidad").val()
+                }
+                $.ajax({
+                    url: "https://apicruddepartamentoscore.azurewebsites.net/api/Departamentos",
+                    type: "PUT",
+                    contentType: "application/json",
+                    data:  JSON.stringify(dept),
+                    success: function(data){
+                        console.log("Modificado");
+                        loadDepartamentos();
+                    }
+                })
+            })
+        }
+
+        function deleteDepartamentos(){
+            $("#botoneliminar").click(function(){
+                let id = parseInt($("#cajaid").val());
+                $.ajax({
+                    url: "https://apicruddepartamentoscore.azurewebsites.net/api/Departamentos/" + id,
+                    type: "DELETE",
+                })
+            })
+        }
+
+    </script>
+</body>
+</html>
