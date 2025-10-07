@@ -12,21 +12,39 @@
     <script>
         $(document).ready(function(){
             loadDepartamentos();
+            $("#listadepartamentos").on("click", "button", function(){
+                deleteDepartamentos($(this));
+            })
         })
 
         function loadDepartamentos(){
-            $.getJSON("https://apicruddepartamentospgs.azurewebsites.net//webresources/departamentos", function(data){
-                
+            $("#listadepartamentos").empty();
+            $.getJSON("https://apicruddepartamentospgs.azurewebsites.net/webresources/departamentos", function(data){
                 $.each(data, function(index, object){
-                    let conjunto = "";
-                    let boton = $("<button>", {"text": "Eliminar departamento"});
+                    let numero = object.numero;
                     let nombre = object.nombre;
-                    let lista 
-                    conjunto += "<li>" + nombre + "</li>";
+                    let li = $("<li>", {"text": nombre});
+                    let boton = $("<button>", {"value": numero, "text": "Eliminar departamento"});
+                    li.append(boton);
+                    $("#listadepartamentos").append(li);
                     
-                    $("#listadepartamentos").append(boton);
                 })
-                $("#listadepartamentos").html(conjunto);
+            })
+        }
+
+        function deleteDepartamentos(boton){
+            let id = boton.val();
+            console.log(id);
+            $.ajax({
+                url: "https://apicruddepartamentospgs.azurewebsites.net/webresources/departamentos/delete/" + id,
+                type: "DELETE",
+                success: function(){
+                    console.log("Eliminado");
+                    loadDepartamentos();
+                },
+                error: function(){
+                    console.log("Error");
+                }
             })
         }
 
