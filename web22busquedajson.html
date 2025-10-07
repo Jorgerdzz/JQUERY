@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>JUGADORES</h1>
+    <label for="">Seleccione un jugador</label>
+    <select id="selectjugador">
+        Jugadores
+    </select>
+    <div id="containerjugador"></div>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url: "documents/jugadores.json",
+                type: "GET",
+                dataType: "json",
+                success: function(data){
+                    $.each(data.jugadores, function(indice, objeto){
+                        let option = $("<option>");
+                        option.val(indice)
+                        option.text(objeto.nombre);
+                        $("#selectjugador").append(option);
+                    })
+                }
+            })
+            $("#selectjugador").change(function(){
+                let indice = $(this).val();
+                $.ajax({
+                    url: "documents/jugadores.json",
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data){
+                        let html = "";
+                        let jugador = data.jugadores[indice];
+                        let posicion = jugador.posicion;
+                        let edad = jugador.edad;
+                        let imagen = jugador.imagen;
+                        let img = "<img src='" + imagen + "'/>";
+                        html += "<h1>Posición: " + jugador.nombre + "</h1>";
+                        html += "<h5>Posición: " + posicion + "</h1>";
+                        html += "<h5>Edad: " + edad + "</h5>";
+                        html += img;
+                        $("#containerjugador").html(html);
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>
