@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Maestro detalle empleados departamentos</h1>
+    <ul id="listadepartamentos"></ul>
+    <table id="tablaempleados" border="1">
+        <thead>
+            <th>Apellido</th>
+            <th>Oficio</th>
+            <th>Salario</th>
+            <th>Departamento</th>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            loadDepartamentos();
+        })
+
+        function loadDepartamentos(){
+            $.getJSON("https://apicruddepartamentospgs.azurewebsites.net//webresources/departamentos", function(data){
+                $.each(data, function(index, object){
+                    let nombreDepartamento = object.nombre;
+                    let numero = object.numero;
+                    let li = $("<li>", {"text": nombreDepartamento});
+                    let a = $("<a>", {"href": "#", "text": "Empleados", "data-id": numero});
+                    li.append(a);
+                    $("#listadepartamentos").append(li);
+                    a.click(function(){
+                        let idDepartamento = $(this).data("id");
+                        console.log(idDepartamento);
+                        $.getJSON("https://apiempleadosspgs.azurewebsites.net/api/Empleados/EmpleadosDepartamento/" + idDepartamento, function(data){
+                            let html = "";
+                            $.each(data, function(index, object){
+                                console.log(data);
+                                let apellido = object.apellido;
+                                let oficio = object.oficio;
+                                let salario = object.salario;
+                                let departamento = object.departamento;
+                                html += "<tr>";
+                                html += "<td>" + apellido + "</td>";
+                                html += "<td>" + oficio + "</td>";
+                                html += "<td>" + salario + "</td>"; 
+                                html += "<td>" + departamento + "</td>";       
+                                html += "</tr>";
+                            })
+                            $("#tablaempleados tbody").html(html);
+                        })
+                    }) 
+                })
+            })
+        }
+    </script>
+</body>
+</html>
