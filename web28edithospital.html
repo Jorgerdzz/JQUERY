@@ -18,7 +18,6 @@
     <link
       href="css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     />
     <link
       rel="apple-touch-icon"
@@ -258,14 +257,42 @@
     </nav>
     <main class="container">
       <div class="bg-body-tertiary p-5 rounded">
-        <h1>HOME</h1>
+        <h1>Hospital update</h1>
+        <label for="">Introduzca ID:</label>
+        <input type="number" id="cajaid" class="form-control">
+        <label for="">Introduzca nombre:</label>
+        <input type="text" id="cajanombre" class="form-control">
+        <label for="">Introduzca direccion:</label>
+        <input type="text" id="cajadireccion" class="form-control">
+        <label for="">Introduzca telefono:</label>
+        <input type="text" id="cajatelefono" class="form-control">
+        <label for="">Introduzca camas:</label>
+        <input type="number" id="cajacamas" class="form-control">
+        <button id="botonmodificar">Modificar hospital</button>
       </div>
     </main>
     <script src="js/bootstrap.bundle.js"></script>
     <script src="js/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function(){
-
+          $("#botonmodificar").click(function(){
+            const hospital = {
+              idhospital: parseInt($("#cajaid").val()),
+              nombre: $("#cajanombre").val(),
+              direccion: $("#cajadireccion").val(),
+              telefono: $("#cajatelefono").val(),
+              camas: $("#cajacamas").val()
+            }
+            $.ajax({
+              url: "https://apicrudhospital.azurewebsites.net/webresources/hospitales/put",
+              type: "PUT",
+              contentType: "application/json",
+              data: JSON.stringify(hospital),
+              success: function(){
+                console.log("Modificado")
+              }
+            })
+          })
         })
     </script>
   </body>

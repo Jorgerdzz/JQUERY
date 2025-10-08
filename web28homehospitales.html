@@ -18,7 +18,6 @@
     <link
       href="css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     />
     <link
       rel="apple-touch-icon"
@@ -266,6 +265,7 @@
                     <th>Dirección</th>
                     <th>Detalles</th>
                     <th>Editar</th>
+                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -276,7 +276,16 @@
     <script src="js/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function(){
-            $.getJSON("https://apicrudhospital.azurewebsites.net/webresources/hospitales", function(data){
+            loadHospitales();
+           $("#tablahospitales").on("click", "button", function(){
+              let id = $(this).val();
+              deleteHospitales(id);
+           }) 
+        })
+
+        function loadHospitales(){
+          $("#tablahospitales tbody").empty();
+          $.getJSON("https://apicrudhospital.azurewebsites.net/webresources/hospitales", function(data){
                 let html = "";
                 $.each(data, function(index, hospital){
                     let idHospital = hospital.idhospital;
@@ -291,11 +300,26 @@
                     html += "<td>";
                     html += "<a href='web28edithospital.html?idhospital=" + idHospital + "'>Edit</a>";
                     html += "</td>";
+                    html += "<td>";
+                    html += "<button value='" + idHospital +  "'>Delete</button>";
+                    html += "</td>";
                     html += "</tr>";
                 })
                 $("#tablahospitales tbody").html(html);
             })
-        })
+        }
+
+        function deleteHospitales(id){
+          $.ajax({
+            url: "https://apicrudhospital.azurewebsites.net/webresources/hospitales/delete/" + id,
+            type: "DELETE",
+            success: function(){
+              console.log("Eliminado");
+              loadHospitales();
+            }
+          })
+        }
+
     </script>
   </body>
 </html>
