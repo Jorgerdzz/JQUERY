@@ -258,16 +258,16 @@
     <main class="container">
       <div class="bg-body-tertiary p-5 rounded">
         <h1>Hospital update</h1>
-        <label for="">Introduzca ID:</label>
-        <input type="number" id="cajaid" class="form-control">
-        <label for="">Introduzca nombre:</label>
+        <label for=""></label>
+        <input type="hidden" id="cajaid" class="form-control">
+        <label for="">Nombre:</label>
         <input type="text" id="cajanombre" class="form-control">
-        <label for="">Introduzca direccion:</label>
+        <label for="">Direccion:</label>
         <input type="text" id="cajadireccion" class="form-control">
-        <label for="">Introduzca telefono:</label>
+        <label for="">Telefono:</label>
         <input type="text" id="cajatelefono" class="form-control">
-        <label for="">Introduzca camas:</label>
-        <input type="number" id="cajacamas" class="form-control">
+        <label for="">Número de camas:</label>
+        <input type="number" id="cajacamas" class="form-control"><br>
         <button id="botonmodificar">Modificar hospital</button>
       </div>
     </main>
@@ -275,9 +275,22 @@
     <script src="js/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function(){
+          let params = new window.URLSearchParams(window.location.search);
+          let idhospital = params.get("idhospital");
+          $.getJSON("https://apicrudhospital.azurewebsites.net/webresources/hospitales",function(data){
+            $.each(data, function(index, hospital){
+              if(hospital.idhospital == idhospital){
+                $("#cajaid").val(hospital.idhospital);
+                $("#cajanombre").val(hospital.nombre);
+                $("#cajadireccion").val(hospital.direccion);
+                $("#cajatelefono").val(hospital.telefono);
+                $("#cajacamas").val(hospital.camas);
+              }
+            })
+          })
           $("#botonmodificar").click(function(){
             const hospital = {
-              idhospital: parseInt($("#cajaid").val()),
+              idhospital: idhospital,
               nombre: $("#cajanombre").val(),
               direccion: $("#cajadireccion").val(),
               telefono: $("#cajatelefono").val(),
@@ -290,6 +303,7 @@
               data: JSON.stringify(hospital),
               success: function(){
                 console.log("Modificado")
+                window.location.href = "web28detailshospital.html?idhospital=" + idhospital 
               }
             })
           })
