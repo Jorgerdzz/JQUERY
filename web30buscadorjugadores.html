@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+    <main style="margin: auto; width: 50%;">
+        <h1 style="color: blue;">Buscador jugadores</h1>
+        <label>Nombre de jugador:</label>
+        <input type="text" class="form-control" id="cajanombre">
+        <button id="botonjugador" class="btn btn-primary">Buscar jugador nombre</button><br>
+        <label>Seleccione equipo</label>
+        <select id="selectequipo" class="form-control">
+
+        </select>
+        <button id="botonequipo" class="btn btn-warning">Buscar jugadores equipo</button>
+
+         <table id="tablajugadores" class='table table-info'>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </main>
+    
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function(){
+            loadEquipos();
+            $("#botonequipo").click(function(){
+                let idequipo = $("#selectequipo").val();
+                loadJugadoresEquipo(idequipo);
+            });
+            $("#botonjugador").click(function(){
+                let nombre = $("#cajanombre").val();
+                loadJugadoresNombre(nombre);
+            })
+        })
+
+        url = "https://apiapuestas.azurewebsites.net/"
+
+        function loadEquipos(){
+            let request = "api/Equipos";
+            $.getJSON(url + request, function(data){
+                $.each(data, (index, equipo)=>{
+                    let option = $("<option>", {text: equipo.nombre, value: equipo.idEquipo});
+                    $("#selectequipo").append(option)
+                })      
+            })
+        }
+
+        function loadJugadoresEquipo(id){
+            let request = "api/Jugadores/JugadoresEquipos/" + id
+            $.getJSON(url + request, function(data){
+                let html = `
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Posición</th>
+                            <th>Pais</th>
+                        </tr>
+                    </thead>
+                `;
+                $.each(data, (index, jugador)=>{
+                    html += `
+                        <tr>
+                            <td><img src=${jugador.imagen} style='width: 100px;'/></td>
+                            <td>${jugador.nombre}</td>
+                            <td>${jugador.posicion}</td>
+                            <td>${jugador.pais}</td>
+                        </tr>
+                    `;
+                })
+                $("#tablajugadores").html(html);
+            })
+        }
+
+        function loadJugadoresNombre(nombre){
+            let request = "api/Jugadores/BuscarJugadores/" + nombre;
+            $.getJSON(url + request, function(data){
+                let html = `
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Posición</th>
+                            <th>Pais</th>
+                        </tr>
+                    </thead>
+                `;
+                $.each(data, (index, jugador)=>{
+                    html += `
+                        <tr>
+                            <td><img src=${jugador.imagen} style='width: 100px;'/></td>
+                            <td>${jugador.nombre}</td>
+                            <td>${jugador.posicion}</td>
+                            <td>${jugador.pais}</td>
+                        </tr>
+                    `;
+                })
+                $("#tablajugadores").html(html);
+            })
+        }
+
+    </script>
+</body>
+</html>
